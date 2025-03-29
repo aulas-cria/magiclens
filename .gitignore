@@ -1,0 +1,10 @@
+.vscode/
+
+__pycache__/
+.env
+.pytest_cache
+
+.python-version
+
+.coverage
+htmlcov/
