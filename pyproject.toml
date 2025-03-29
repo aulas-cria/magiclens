@@ -6,11 +6,21 @@ authors = [
     {name = "caio.imperial",email = "scaioimperial@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<4.0"
 dependencies = [
+    "flask (>=3.1.0,<4.0.0)"
 ]
+
+[tool.taskipy.tasks]
+start = "flask --app magiclens.app run"
+test = "pytest"
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+taskipy = "^1.14.1"
+
