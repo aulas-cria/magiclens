@@ -1,4 +1,7 @@
 import boto3
+
+from botocore.exceptions import ClientError
+
 from magiclens.storage.storage_handler import StorageHandler
 from magiclens.config import Settings
 
@@ -12,18 +15,29 @@ class S3Handler(StorageHandler):
         )
         self.bucket_name = Settings().bucket_name
 
-    def save_image(self, filename: str, content: str):
-        self.__put_object(filename=filename, content=content)
+    def save(self, filename: str, content: str):
+        return self.s3.upload_file(
+            Filename=filename.split('/')[-1],
+            Bucket=self.bucket_name,
+            Key=filename,
+            Body=content,
+            ContentType=content.content_type,
+            Metadata={
+                "filename": filename,
+                "content-type": content.content_type,
+            }
+        )
+
+    def get(self, filename: str):
+        try:
+            return self.__get_object(filename=filename)
+        except Exception as e:
+            return
 
     def __create_bucket(self):
         self.s3.create_bucket(Bucket=self.bucket_name)
 
-    def __put_object(self, filename: str, content: str):
-        self.s3.put_object(
-            Bucket=self.bucket_name, Key=filename, Body=content
-        )
-
-    def __get_object(self, key: str):
+    def __get_object(self, filename: str):
         return self.s3.get_object(
-            Bucket=self.bucket_name, Key=key
+            Bucket=self.bucket_name, Key=filename
         )
