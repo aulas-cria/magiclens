@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from magiclens.routes.ui_demo import ui_demo
+from magiclens.storage import S3Handler
+from magiclens.config import Settings
 
 app = Flask(__name__)
 
@@ -14,17 +16,30 @@ def upload():
         return jsonify({"error": "Nenhum arquivo enviado"}), 400
 
     file = request.files['file']
-    filename = file.filename
 
     if file.filename == '':
             return jsonify({"error": "Nome do arquivo vazio"}), 400
     
+    filename = request.form.get('filename')
+    
+    if filename:
+        print(filename.split('.')[0],file.filename.split('.')[-1])
+        filename = '.'.join([
+            filename.split('.')[0],
+            file.filename.split('.')[-1]
+        ])
+    else:
+        filename = file.filename
+    
 
-    # o codigo para receber o arquivo e salvar na pasta storage
-    # seguir o padrao de nome do arquivo
-    # o path passado na url deve ser o path do arquivo
-    # deve ficar aqui dentro 
-    return {'message': 'Arquivo enviado com sucesso'}
+    storage = S3Handler()
+
+    if storage.get(filename):
+        return jsonify({"error": "Arquivo já existe"}), 400
+
+    storage.save(filename, file)
+
+    return { 'url': f'{Settings().ENDPOINT_URL}/{Settings().BUCKET_NAME}/{filename}' }
 
 @app.route('/api/image/<path:filename>', methods=['GET'])
 def process(filename: str):
