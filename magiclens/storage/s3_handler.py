@@ -12,7 +12,7 @@ class S3Handler(StorageHandler):
         )
         self.bucket_name = Settings().bucket_name
 
-    def save_image(self, filename: str, content: str):
+    def save(self, filename: str, content: str):
         self.__put_object(filename=filename, content=content)
 
     def __create_bucket(self):
