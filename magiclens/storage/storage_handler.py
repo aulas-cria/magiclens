@@ -7,4 +7,3 @@ class StorageHandler:
 
     def get(self, filename: str):
         pass
-
