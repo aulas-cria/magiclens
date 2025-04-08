@@ -20,10 +20,7 @@ def upload():
     if file.filename == '':
             return jsonify({"error": "Nome do arquivo vazio"}), 400
 
-    # o codigo para receber o arquivo e salvar na pasta storage
-    # seguir o padrao de nome do arquivo
-    # o path passado na url deve ser o path do arquivo
-    # deve ficar aqui dentro 
+   
     return { 'message': 'URL da imagem' }
 
 @app.route('/api/image/<path:filename>', methods=['GET'])
