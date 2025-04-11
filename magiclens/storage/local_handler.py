@@ -1,6 +1,5 @@
 import os
 
-from magiclens.config import Settings
 from magiclens.storage.storage_handler import StorageHandler
 
 class LocalHandler(StorageHandler):
