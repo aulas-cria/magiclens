@@ -7,13 +7,26 @@ class LocalHandler(StorageHandler):
         self.base_path = base_path
 
     def save(self, filename: str, content: any) -> str:
-        file_path = os.path.join(self.base_path, filename)
-        
-        with open(file_path, 'wb') as f:
+        filename_parts = filename.split('/')
+
+        file_path = os.path.join(
+            self.base_path,
+            *filename_parts[:-1]
+        )
+        filename = filename_parts[-1]
+
+        os.makedirs(file_path, exist_ok=True)
+
+        with open(os.path.join(file_path, filename), 'wb') as f:
             f.write(content)
 
         return f'{self.base_path}/{filename}'
 
     def get(self, filename: str) -> str:
         file_path = os.path.join(self.base_path, filename)
-        return file_path
+        
+        if not os.path.exists(file_path):
+            return None
+        
+        with open(file_path, 'rb') as f:
+            return f.read()
