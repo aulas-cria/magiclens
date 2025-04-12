@@ -1,14 +1,25 @@
-from flask import Flask, request, jsonify, redirect, url_for
-from magiclens.routes.iu.demo.ui_demo import ui_demo
+import os
+
+from flask import Flask, request, jsonify, render_template
+
+from magiclens.config import Settings
+from magiclens.routes.ui_demo import ui_demo
+from magiclens.storage.local_handler import LocalHandler
 
 app = Flask(__name__)
 
-app.register_blueprint(ui_demo, url_prefix='/ui/demo')
+UPLOAD_FOLDER = f'magiclens/static/{Settings().bucket_name}'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+app.register_blueprint(ui_demo)
 @app.route('/api/status')
 def index():
     return {'message': 'Ok'}
 
+@app.route('/api/image', methods=['POST'])
 @app.route('/api/image', methods=['POST'])
 def upload():
     if 'file' not in request.files:
@@ -19,9 +30,24 @@ def upload():
 
     if file.filename == '':
             return jsonify({"error": "Nome do arquivo vazio"}), 400
+    
+    filename = request.form.get('filename')
+    if filename:
+        filename = '.'.join([
+            filename.split('.')[0],
+            file.filename.split('.')[-1]
+        ])
+    else:
+        filename = file.filename
 
-   
-    return { 'message': 'URL da imagem' }
+    storage = LocalHandler(base_path=app.config['UPLOAD_FOLDER'])
+    
+    storage.save(
+        filename=filename,
+        content=file.read()
+    )
+
+    return render_template('demo_show_image.html', filename='imagens/'+filename)
 
 @app.route('/api/image/<path:filename>', methods=['GET'])
 def process(filename: str):
