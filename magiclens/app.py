@@ -8,12 +8,6 @@ from magiclens.storage.local_handler import LocalHandler
 from magiclens.transform.transform_handler import TransformHandler
 app = Flask(__name__)
 
-UPLOAD_FOLDER = f'magiclens/static/{Settings().bucket_name}'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 app.register_blueprint(demo_bp)
 
 @app.route('/api/status')
@@ -41,14 +35,21 @@ def upload():
     else:
         filename = file.filename
 
-    storage = LocalHandler(base_path=app.config['UPLOAD_FOLDER'])
+    storage = LocalHandler()
     
-    storage.save(
+    image_path = storage.save(
         filename=filename,
         content=file.read()
     )
 
-    return render_template('demo_show_image.html', filename='imagens/'+filename)
+    return redirect(
+        location=url_for(
+            endpoint='static', 
+            filename=image_path
+        ),
+        code=302
+    )
+
 
 @app.route('/api/image/<path:filename>', methods=['GET'])
 def process(filename: str):
@@ -58,36 +59,44 @@ def process(filename: str):
     
     path_list = [str(part) for part in [f'w{width}', f'h{height}', filename] if part not in [None, 'hNone', 'wNone']]
 
-    storage = LocalHandler(base_path=app.config['UPLOAD_FOLDER'])
+    storage = LocalHandler()
     
-    # verifica se a imagem original existe
-    if storage.get(filename) is None:
-        return jsonify({"error": "Imagem não encontrada"}), 404
+    image_default_path= storage.get_path(filename)
+
+    if image_default_path is None:
+        return jsonify({"error": "Imagem original não encontrada"}), 404
 
     full_path = os.path.join(*path_list)
     
+    image_modified_path = storage.get_path(full_path)
+    
     # deve verificar se o imagem existe com as caracteristicas do arquivo
-    if storage.get(full_path) is None:
+    if  image_modified_path is None:
         transform = TransformHandler()
         
-        path_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image_bytes =transform.change_size(
-            filename=path_filename,
+        image_bytes = storage.get(filename)
+        image_modified_bytes = transform.change_size(
+            image_content=image_bytes,
             width=width,
             height=height,
         )
-        storage.save(
+        image_modified_path = storage.save(
             filename=full_path,
-            content=image_bytes
+            content=image_modified_bytes
         )
 
+        return redirect(
+            location=url_for(
+                endpoint='static', 
+                filename=image_modified_path
+            ),
+            code=302
+        )
+    
     return redirect(
         location=url_for(
             endpoint='static', 
-            filename=os.path.join(
-                Settings().bucket_name,
-                full_path
-            )
+            filename=image_modified_path
         ),
         code=302
     )
