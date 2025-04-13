@@ -1,32 +1,51 @@
 import os
 
 from magiclens.storage.storage_handler import StorageHandler
+from magiclens.config import Settings
 
 class LocalHandler(StorageHandler):
-    def __init__(self, base_path: str):
-        self.base_path = base_path
-
-    def save(self, filename: str, content: any) -> str:
-        filename_parts = filename.split('/')
-
-        file_path = os.path.join(
-            self.base_path,
-            *filename_parts[:-1]
+    def __init__(self):
+        self.base_path_system = os.path.join(
+            'magiclens',
+            'static',
+            Settings().bucket_name
         )
-        filename = filename_parts[-1]
+        self.base_path_app = Settings().bucket_name
 
-        os.makedirs(file_path, exist_ok=True)
+    def save(self, filename: str, content: bytes, base_path_system: bool = False):
+        filename_system = os.path.join(self.base_path_system, filename)
 
-        with open(os.path.join(file_path, filename), 'wb') as f:
+        file_path_system = os.path.dirname(filename_system)
+
+        os.makedirs(file_path_system, exist_ok=True)
+
+        with open(filename_system, 'wb') as f:
             f.write(content)
 
-        return f'{self.base_path}/{filename}'
+        if base_path_system:
+            return os.path.join(self.base_path_system, filename)
 
-    def get(self, filename: str) -> str:
-        file_path = os.path.join(self.base_path, filename)
+        return os.path.join(self.base_path_app, filename)
+
+    def get_path(self, filename: str, base_path_system: bool = False):
+        filename_system = os.path.join(self.base_path_system, filename)
         
-        if not os.path.exists(file_path):
+        if not os.path.exists(filename_system):
+            return None
+
+        if base_path_system:
+            return os.path.join(self.base_path_system, filename)
+        
+        return os.path.join(self.base_path_app, filename)
+
+    def get(self, filename: str):
+        filename_system = self.get_path(
+            filename=filename,
+            base_path_system=True
+        )
+
+        if filename_system is None:
             return None
         
-        with open(file_path, 'rb') as f:
+        with open(filename_system, 'rb') as f:
             return f.read()

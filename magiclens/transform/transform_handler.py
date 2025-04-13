@@ -4,11 +4,11 @@ from PIL import Image
 class TransformHandler:
     def change_size(
             self,
-            filename: str,
+            image_content: bytes,
             width: int | None = None,
             height: int | None = None
     ):
-        image = Image.open(filename)
+        image = Image.open(BytesIO(image_content))
         original_width, original_height = image.size
         
         if width is None and height is None:
