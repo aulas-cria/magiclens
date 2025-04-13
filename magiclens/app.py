@@ -15,7 +15,6 @@ def index():
     return {'message': 'Ok'}
 
 @app.route('/api/image', methods=['POST'])
-@app.route('/api/image', methods=['POST'])
 def upload():
     if 'file' not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 400
@@ -69,7 +68,7 @@ def process(filename: str):
     full_path = os.path.join(*path_list)
     
     image_modified_path = storage.get_path(full_path)
-    
+
     # deve verificar se o imagem existe com as caracteristicas do arquivo
     if  image_modified_path is None:
         transform = TransformHandler()
