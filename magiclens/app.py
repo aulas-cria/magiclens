@@ -1,8 +1,7 @@
 import os
 
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for
 
-from magiclens.config import Settings
 from magiclens.routes.ui.demo.demo import demo_bp
 from magiclens.storage.local_handler import LocalHandler
 from magiclens.transform.transform_handler import TransformHandler
