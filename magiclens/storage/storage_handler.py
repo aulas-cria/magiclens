@@ -1,9 +1,9 @@
 class StorageHandler:
-    def __init__(self, path: str):
-        self.path = path
-
-    def save(self, filename: str, content: any) -> str:
+    def save(self, filename: str, content: bytes) -> str:
         pass
 
-    def get(self, filename: str):
+    def get_path(self, filename: str, base_path_system: bool = False) -> str:
+        pass
+
+    def get(self, filename: str)-> bytes | None:
         pass
