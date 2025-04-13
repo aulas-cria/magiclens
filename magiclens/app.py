@@ -2,12 +2,13 @@ import os
 
 from flask import Flask, request, jsonify, redirect, url_for
 
-from magiclens.routes.ui.demo.demo import demo_bp
+from magiclens.routes.view import view_image_bp
 from magiclens.storage.local_handler import LocalHandler
 from magiclens.transform.transform_handler import TransformHandler
+
 app = Flask(__name__)
 
-app.register_blueprint(demo_bp)
+app.register_blueprint(view_image_bp, url_prefix='/view')
 
 @app.route('/api/status')
 def index():
