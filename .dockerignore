@@ -1,0 +1,28 @@
+# Ignorar arquivos de ambiente
+.env*
+
+# Ignorar diretórios de dependências Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de configuração local
+*.local
+
+# Ignorar arquivos de IDE
+.idea/
+.vscode/
+
+# Ignorar arquivos de teste
+tests/ 
+
+*.md
+
+.python-version
+.coverage
+htmlcov/
+
+*/static/imagens
