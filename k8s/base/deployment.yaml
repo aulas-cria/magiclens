@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magiclens
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: magiclens
+  template:
+    metadata:
+      labels:
+        app: magiclens
+    spec:
+      containers:
+      - name: magiclens
+        image: magiclens:0.0.1
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_APP
+          value: magiclens/app.py
+        - name: FLASK_ENV
+          value: development
+        - name: BUCKET_NAME
+          value: images

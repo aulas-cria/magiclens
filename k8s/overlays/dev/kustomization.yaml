@@ -1,0 +1,10 @@
+bases:
+  - ../../base
+
+images:
+  - name: magiclens
+    newName: localhost/magiclens
+    newTag: 0.0.1
+
+resources:
+  - magiclens-ingress.yaml
