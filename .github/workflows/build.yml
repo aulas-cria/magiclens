@@ -26,4 +26,4 @@ jobs:
 
       - name: Push to registry
         run: |
-          docker push http://registry.registry.svc.cluster.local:5000/${{ steps.vars.outputs.tag }}
+          docker push registry.registry.svc.cluster.local:5000/${{ steps.vars.outputs.tag }}
