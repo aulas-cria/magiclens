@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, jsonify, redirect, url_for
 
 from magiclens.storage.local_handler import LocalHandler

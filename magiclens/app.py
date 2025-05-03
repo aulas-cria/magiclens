@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask, redirect
 
 from magiclens.routes.view import view_image_bp
