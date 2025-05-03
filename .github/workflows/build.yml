@@ -14,7 +14,7 @@ jobs:
 
       - name: Set image tag
         id: vars
-        run: echo "tag=registry.registry.svc.cluster.local:5000/magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: echo "tag=magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Login to internal registry (se necessário)
         run: echo "sem login, registry é aberto"
@@ -25,4 +25,4 @@ jobs:
 
       - name: Push to registry
         run: |
-          docker push ${{ steps.vars.outputs.tag }}
+          docker push http://registry.registry.svc.cluster.local:5000/${{ steps.vars.outputs.tag }}
