@@ -1,0 +1,28 @@
+name: Build & Push to Internal Registry
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: vars
+        run: echo "tag=registry.registry.svc.cluster.local:5000/magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Login to internal registry (se necessário)
+        run: echo "sem login, registry é aberto"
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ steps.vars.outputs.tag }} .
+
+      - name: Push to registry
+        run: |
+          docker push ${{ steps.vars.outputs.tag }}
