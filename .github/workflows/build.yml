@@ -1,6 +1,7 @@
 name: Build & Push to Internal Registry
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
