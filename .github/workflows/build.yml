@@ -28,8 +28,17 @@ jobs:
 
       - name: Install kubectl
         run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          version=$(curl -s https://dl.k8s.io/release/stable.txt)
+
+          curl -LO "https://dl.k8s.io/release/${version}/bin/linux/amd64/kubectl"
+
+          ls -l kubectl
+
+          chmod +x kubectl
+
+          sudo mv kubectl /usr/local/bin/kubectl
+
+          kubectl version --client
 
       - name: Generate manifest
         run: envsubst < k8s/deployment.yaml.template > k8s/deployment.yaml
