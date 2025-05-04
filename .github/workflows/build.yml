@@ -28,7 +28,7 @@ jobs:
 
       - name: Install kubectl
         run: |
-          version=$(curl -s https://dl.k8s.io/release/stable.txt)
+          version=$(curl -s https://cdn.dl.k8s.io/release/stable.txt)
 
           curl -LO "https://dl.k8s.io/release/${version}/bin/linux/amd64/kubectl"
 
