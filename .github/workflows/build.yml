@@ -15,15 +15,33 @@ jobs:
 
       - name: Set image tag
         id: vars
-        run: echo "tag=magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: echo "TAG=v0.0.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Login to internal registry (se necessário)
         run: echo "sem login, registry é aberto"
 
       - name: Build Docker image
-        run: |
-          docker build -t ${{ steps.vars.outputs.tag }} .
+        run: docker build -t registry.localhost/magiclens:$TAG .
 
       - name: Push to registry
+        run: docker push registry.localhost/magiclens:$TAG
+
+      - name: Install kubectl
         run: |
-          docker push http://registry.registry.svc.cluster.local:5000/${{ steps.vars.outputs.tag }}
+          version=$(curl -s https://cdn.dl.k8s.io/release/stable.txt)
+
+          curl -LO "https://dl.k8s.io/release/${version}/bin/linux/amd64/kubectl"
+
+          ls -l kubectl
+
+          chmod +x kubectl
+
+          sudo mv kubectl /usr/local/bin/kubectl
+
+          kubectl version --client
+
+      - name: Generate manifest
+        run: envsubst < k8s/deployment.yaml.template > k8s/deployment.yaml
+
+      - name: Deploy to cluster
+        run: kubectl apply -f k8s/
