@@ -22,10 +22,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ steps.vars.outputs.tag }} .
-
-      - name: Tag imagem para o registro interno
-        run: docker tag ${{ steps.vars.outputs.tag }} registry.localhost/${{ steps.vars.outputs.tag }}
+          docker build -t registry.localhost/${{ steps.vars.outputs.tag }} .
 
       - name: Push to registry
         run: |
