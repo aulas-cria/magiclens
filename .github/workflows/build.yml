@@ -15,15 +15,19 @@ jobs:
 
       - name: Set image tag
         id: vars
-        run: echo "::set-output name=tag::magiclens:v0.0.${{ github.run_number }}"
+        run: echo "TAG=registry.localhost/magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Login to internal registry (se necessário)
         run: echo "sem login, registry é aberto"
 
       - name: Build Docker image
-        run: |
-          docker build -t registry.localhost/${{ steps.vars.outputs.tag }} .
+        run: docker build -t $TAG .
 
       - name: Push to registry
-        run: |
-          docker push registry.localhost/${{ steps.vars.outputs.tag }}
+        run: docker push $TAG
+
+      - name: Generate manifest
+        run: envsubst < k8s/deployment.yaml.template > k8s/deployment.yaml
+
+      - name: Deploy to cluster
+        run: kubectl apply -f k8s/
