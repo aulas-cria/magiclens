@@ -15,16 +15,16 @@ jobs:
 
       - name: Set image tag
         id: vars
-        run: echo "TAG=registry.localhost/magiclens:v0.0.${{ github.run_number }}" >> $GITHUB_ENV
+        run: echo "TAG=v0.0.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Login to internal registry (se necessário)
         run: echo "sem login, registry é aberto"
 
       - name: Build Docker image
-        run: docker build -t $TAG .
+        run: docker build -t registry.localhost/magiclens:$TAG .
 
       - name: Push to registry
-        run: docker push $TAG
+        run: docker push registry.localhost/magiclens:$TAG
 
       - name: Install kubectl
         run: |
