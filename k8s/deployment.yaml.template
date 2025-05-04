@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: app
-          image: registry.registry.svc.cluster.local:5000/magiclens:$TAG
+          image: registry.localhost/magiclens:$TAG
           ports:
             - containerPort: 5000
